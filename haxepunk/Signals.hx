@@ -16,7 +16,7 @@ class Signals implements Dynamic<Signal>
 		}
 	}
 
-	function resolve(field:String):Signal
+	public function resolve(field:String):Signal
 	{
 		if (!signals.exists(field))
 		{

@@ -53,7 +53,7 @@ class Console
 	{
 		init();
 
-		Input.define("_ARROWS", [Key.RIGHT, Key.LEFT, Key.DOWN, Key.UP]);
+		Key.define("_ARROWS", [Key.RIGHT, Key.LEFT, Key.DOWN, Key.UP]);
 	}
 
 	// Initialize variables
@@ -438,7 +438,7 @@ class Console
 						// Mouse is within clickable area.
 						if (Input.mouseFlashY > 20 && (Input.mouseFlashX > _debReadText1.width || Input.mouseFlashY < _debRead.y))
 						{
-							if (Input.check(Key.SHIFT))
+							if (Key.check(Key.SHIFT))
 							{
 								if (SELECT_LIST.length != 0) startDragging();
 								else startPanning();
@@ -455,10 +455,10 @@ class Console
 					}
 
 					// Select all Entities
-					if (Input.pressed(Key.A)) selectAll();
+					if (Key.pressed(Key.A)) selectAll();
 
 					// If the shift key is held.
-					if (Input.check(Key.SHIFT))
+					if (Key.check(Key.SHIFT))
 					{
 						// If Entities are selected.
 						if (SELECT_LIST.length != 0)
@@ -499,7 +499,7 @@ class Console
 		}
 
 		// Console toggle.
-		if (Input.pressed(toggleKey)) paused = !_paused;
+		if (Key.pressed(toggleKey)) paused = !_paused;
 	}
 
 	/**
@@ -691,7 +691,7 @@ class Console
 			sy:Float = HXP.screen.fullScaleY,
 			e:Entity;
 
-		if (!Input.check(Key.CONTROL))
+		if (!Key.check(Key.CONTROL))
 		{
 			// Replace selections with new selections.
 			HXP.clear(SELECT_LIST);
@@ -747,16 +747,16 @@ class Console
 	/** @private Moves Entities with the arrow keys. */
 	function updateKeyMoving()
 	{
-		HXP.point.x = (Input.pressed(Key.RIGHT) ? 1 : 0) - (Input.pressed(Key.LEFT) ? 1 : 0);
-		HXP.point.y = (Input.pressed(Key.DOWN) ? 1 : 0) - (Input.pressed(Key.UP) ? 1 : 0);
+		HXP.point.x = (Key.pressed(Key.RIGHT) ? 1 : 0) - (Key.pressed(Key.LEFT) ? 1 : 0);
+		HXP.point.y = (Key.pressed(Key.DOWN) ? 1 : 0) - (Key.pressed(Key.UP) ? 1 : 0);
 		if (HXP.point.x != 0 || HXP.point.y != 0) moveSelected(Std.int(HXP.point.x), Std.int(HXP.point.y));
 	}
 
 	/** @private Pans the camera with the arrow keys. */
 	function updateKeyPanning()
 	{
-		HXP.point.x = (Input.check(Key.RIGHT) ? 1 : 0) - (Input.check(Key.LEFT) ? 1 : 0);
-		HXP.point.y = (Input.check(Key.DOWN) ? 1 : 0) - (Input.check(Key.UP) ? 1 : 0);
+		HXP.point.x = (Key.check(Key.RIGHT) ? 1 : 0) - (Key.check(Key.LEFT) ? 1 : 0);
+		HXP.point.y = (Key.check(Key.DOWN) ? 1 : 0) - (Key.check(Key.UP) ? 1 : 0);
 		if (HXP.point.x != 0 || HXP.point.y != 0) panCamera(Std.int(HXP.point.x), Std.int(HXP.point.y));
 	}
 
