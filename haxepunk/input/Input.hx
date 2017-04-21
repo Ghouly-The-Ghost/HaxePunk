@@ -95,20 +95,6 @@ class Input
 		return false;
 	}
 
-	public static function touchPoints(touchCallback:Touch->Void)
-	{
-		for (touchId in _touchOrder)
-		{
-			touchCallback(_touches[touchId]);
-		}
-	}
-
-	public static var touches(get, never):Map<Int, Touch>;
-	static inline function get_touches():Map<Int, Touch> return _touches;
-
-	public static var touchOrder(get, never):Array<Int>;
-	static inline function get_touchOrder():Array<Int> return _touchOrder;
-
 	/**
 	 * Enables input handling
 	 */
@@ -124,11 +110,7 @@ class Input
 			multiTouchSupported = Multitouch.supportsTouchEvents;
 			if (multiTouchSupported)
 			{
-				Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-
-				HXP.stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-				HXP.stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchMove);
-				HXP.stage.addEventListener(TouchEvent.TOUCH_END, onTouchEnd);
+				Touch.init();
 			}
 		}
 	}
@@ -139,29 +121,7 @@ class Input
 	@:dox(hide)
 	public static function update()
 	{
-		for (handler in handlers)
-		{
-			handler.update();
-		}
-		if (multiTouchSupported)
-		{
-			for (touchId in _touchOrder) _touches[touchId].update();
-
-			if (Gesture.enabled) Gesture.update();
-
-			var i:Int = 0;
-			while (i < _touchOrder.length)
-			{
-				var touchId = _touchOrder[i],
-					touch = _touches[touchId];
-				if (touch.released && !touch.pressed)
-				{
-					_touches.remove(touchId);
-					_touchOrder.remove(touchId);
-				}
-				else ++i;
-			}
-		}
+		for (handler in handlers) handler.update();
 	}
 
 	public static function postUpdate()
@@ -169,33 +129,5 @@ class Input
 		for (handler in handlers) handler.postUpdate();
 	}
 
-	static function onTouchBegin(e:TouchEvent)
-	{
-		var touchPoint = new Touch(e.stageX / HXP.screen.fullScaleX, e.stageY / HXP.screen.fullScaleY, e.touchPointID);
-		_touches.set(e.touchPointID, touchPoint);
-		_touchOrder.push(e.touchPointID);
-	}
-
-	static function onTouchMove(e:TouchEvent)
-	{
-		// maybe we missed the begin event sometimes?
-		if (_touches.exists(e.touchPointID))
-		{
-			var point = _touches.get(e.touchPointID);
-			point.x = e.stageX / HXP.screen.fullScaleX;
-			point.y = e.stageY / HXP.screen.fullScaleY;
-		}
-	}
-
-	static function onTouchEnd(e:TouchEvent)
-	{
-		if (_touches.exists(e.touchPointID))
-		{
-			_touches.get(e.touchPointID).released = true;
-		}
-	}
-
 	static var _enabled:Bool = false;
-	static var _touches:Map<Int, Touch> = new Map<Int, Touch>();
-	static var _touchOrder:Array<Int> = new Array();
 }
