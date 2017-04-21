@@ -18,6 +18,7 @@ import haxepunk.Entity;
 import haxepunk.HXP;
 import haxepunk.input.Input;
 import haxepunk.input.Key;
+import haxepunk.input.Mouse;
 import haxepunk.utils.Color;
 import haxepunk.utils.MathUtil;
 
@@ -433,10 +434,10 @@ class Console
 				if (HXP.engine.paused)
 				{
 					// When the mouse is pressed.
-					if (Input.mousePressed)
+					if (Mouse.mousePressed)
 					{
 						// Mouse is within clickable area.
-						if (Input.mouseFlashY > 20 && (Input.mouseFlashX > _debReadText1.width || Input.mouseFlashY < _debRead.y))
+						if (Mouse.mouseFlashY > 20 && (Mouse.mouseFlashX > _debReadText1.width || Mouse.mouseFlashY < _debRead.y))
 						{
 							if (Key.check(Key.SHIFT))
 							{
@@ -488,7 +489,7 @@ class Console
 			{
 				// log scrollbar
 				if (_scrolling) updateScrolling();
-				else if (Input.mousePressed) startScrolling();
+				else if (Mouse.mousePressed) startScrolling();
 			}
 		}
 		else
@@ -530,7 +531,7 @@ class Console
 			if (_debug) debug = true;
 			else updateLog();
 
-			Input.showCursor();
+			Mouse.showCursor();
 		}
 		else
 		{
@@ -585,17 +586,17 @@ class Console
 	function startDragging()
 	{
 		_dragging = true;
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Updates Entity dragging. */
 	function updateDragging()
 	{
-		moveSelected(Std.int(Input.mouseX - _entRect.x), Std.int(Input.mouseY - _entRect.y));
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
-		if (Input.mouseReleased) _dragging = false;
+		moveSelected(Std.int(Mouse.mouseX - _entRect.x), Std.int(Mouse.mouseY - _entRect.y));
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
+		if (Mouse.mouseReleased) _dragging = false;
 	}
 
 	/** @private Move the selected Entitites by the amount. */
@@ -615,17 +616,17 @@ class Console
 	function startPanning()
 	{
 		_panning = true;
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Updates camera panning. */
 	function updatePanning()
 	{
-		if (Input.mouseReleased) _panning = false;
-		panCamera(Std.int(_entRect.x - Input.mouseX), Std.int(_entRect.y - Input.mouseY));
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		if (Mouse.mouseReleased) _panning = false;
+		panCamera(Std.int(_entRect.x - Mouse.mouseX), Std.int(_entRect.y - Mouse.mouseY));
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Pans the camera. */
@@ -652,8 +653,8 @@ class Console
 	function startSelection()
 	{
 		_selecting = true;
-		_entRect.x = Input.mouseFlashX;
-		_entRect.y = Input.mouseFlashY;
+		_entRect.x = Mouse.mouseFlashX;
+		_entRect.y = Mouse.mouseFlashY;
 		_entRect.width = 0;
 		_entRect.height = 0;
 	}
@@ -661,9 +662,9 @@ class Console
 	/** @private Updates Entity selection. */
 	function updateSelection()
 	{
-		_entRect.width = Input.mouseFlashX - _entRect.x;
-		_entRect.height = Input.mouseFlashY - _entRect.y;
-		if (Input.mouseReleased)
+		_entRect.width = Mouse.mouseFlashX - _entRect.x;
+		_entRect.height = Mouse.mouseFlashY - _entRect.y;
+		if (Mouse.mouseReleased)
 		{
 			selectEntities(_entRect);
 			renderEntities();
@@ -733,14 +734,14 @@ class Console
 	/** @private Starts log text scrolling. */
 	function startScrolling()
 	{
-		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(Input.mouseFlashX, Input.mouseFlashY);
+		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(Mouse.mouseFlashX, Mouse.mouseFlashY);
 	}
 
 	/** @private Updates log text scrolling. */
 	function updateScrolling()
 	{
-		_scrolling = Input.mouseDown;
-		_logScroll = MathUtil.scaleClamp(Input.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
+		_scrolling = Mouse.mouseDown;
+		_logScroll = MathUtil.scaleClamp(Mouse.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
 		updateLog();
 	}
 
@@ -1019,7 +1020,7 @@ class Console
 		if (_butDebug.bitmapData.rect.contains(_butDebug.mouseX, _butDebug.mouseY))
 		{
 			_butDebug.alpha = _butOutput.alpha = 1;
-			if (Input.mousePressed) debug = !_debug;
+			if (Mouse.mousePressed) debug = !_debug;
 		}
 		else _butDebug.alpha = _butOutput.alpha = 0.5;
 
@@ -1027,7 +1028,7 @@ class Console
 		if (_butPlay.bitmapData.rect.contains(_butPlay.mouseX, _butPlay.mouseY))
 		{
 			_butPlay.alpha = _butPause.alpha = 1;
-			if (Input.mousePressed)
+			if (Mouse.mousePressed)
 			{
 				HXP.engine.paused = !HXP.engine.paused;
 				renderEntities();
@@ -1039,7 +1040,7 @@ class Console
 		if (_butStep.bitmapData.rect.contains(_butStep.mouseX, _butStep.mouseY))
 		{
 			_butStep.alpha = 1;
-			if (Input.mousePressed) stepFrame();
+			if (Mouse.mousePressed) stepFrame();
 		}
 		else _butStep.alpha = .5;
 	}
