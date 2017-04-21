@@ -310,7 +310,7 @@ class Input
 
 	public static function postUpdate()
 	{
-		Key.postUpdate();
+		for (handler in handlers) handler.postUpdate();
 
 		if (mousePressed) mousePressed = false;
 		if (mouseReleased) mouseReleased = false;

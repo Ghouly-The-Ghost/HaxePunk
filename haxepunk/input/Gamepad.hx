@@ -1,177 +1,189 @@
 package haxepunk.input;
 
 import flash.geom.Point;
-#if ((nme || openfl_legacy) && (cpp || neko))
-import flash.events.JoystickEvent;
+#if lime
+import lime.ui.Gamepad as LimeGamepad;
 #else
-import flash.events.GameInputEvent;
-import flash.ui.GameInput;
-import flash.ui.GameInputDevice;
-import flash.ui.GameInputControl;
-
+import flash.events.JoystickEvent;
 #end
 import haxepunk.HXP;
 
 typedef GamepadID = Int;
-
 typedef GamepadButton = Int;
+typedef GamepadAxis = Int;
 
-enum JoyButtonState
+@:enum
+abstract JoyButtonState(Int) from Int to Int
 {
-	BUTTON_ON;
-	BUTTON_OFF;
-	BUTTON_PRESSED;
-	BUTTON_RELEASED;
+	var BUTTON_ON = 1;
+	var BUTTON_OFF = 0;
+	var BUTTON_PRESSED = 2;
+	var BUTTON_RELEASED = -1;
+}
+
+typedef AxisDefinition = {
+	var axis:GamepadAxis;
+	var minValue:Float;
+	var maxValue:Float;
+	var input:InputType;
 }
 
 /**
  * A gamepad.
- *
- * Get one using `Input.gamepad`.
- *
- * Currently doesn't work with flash and html5 targets.
  */
 class Gamepad
 {
-	public static function init()
-	{
-		#if ((nme || openfl_legacy) && (cpp || neko))
-		HXP.stage.addEventListener(JoystickEvent.AXIS_MOVE, onJoyAxisMove);
-		HXP.stage.addEventListener(JoystickEvent.BALL_MOVE, onJoyBallMove);
-		HXP.stage.addEventListener(JoystickEvent.BUTTON_DOWN, onJoyButtonDown);
-		HXP.stage.addEventListener(JoystickEvent.BUTTON_UP, onJoyButtonUp);
-		HXP.stage.addEventListener(JoystickEvent.HAT_MOVE, onJoyHatMove);
-		HXP.stage.addEventListener(JoystickEvent.DEVICE_ADDED, onJoyDeviceAdded);
-		HXP.stage.addEventListener(JoystickEvent.DEVICE_REMOVED, onJoyDeviceRemoved);
-		#else
-		HXP.stage.addEventListener(GameInputEvent.DEVICE_ADDED, onJoyDeviceAdded);
-		HXP.stage.addEventListener(GameInputEvent.DEVICE_REMOVED, onJoyDeviceRemoved);
-		#end
-	}
-
-	/**
-	 * Returns a gamepad object (creates one if not connected)
-	 * @param  id The id of the gamepad, starting with 0
-	 * @return    A Gamepad object
-	 */
-	public static function gamepad(id:GamepadID):Gamepad
-	{
-		var joy:Gamepad = _gamepads.get(id);
-		if (joy == null)
-		{
-			joy = new Gamepad();
-			_gamepads.set(id, joy);
-		}
-		return joy;
-	}
-
-	/**
-	 * Returns the number of connected gamepads
-	 */
-	public static var gamepadCount(get, never):Int;
-	static function get_gamepadCount():Int
-	{
-		var count:Int = 0;
-		for (gamepad in _gamepads)
-		{
-			if (gamepad.connected)
-			{
-				count += 1;
-			}
-		}
-		return count;
-	}
-
-#if ((nme || openfl_legacy) && (cpp || neko))
-	static function onJoyAxisMove(e:JoystickEvent)
-	{
-		var joy:Gamepad = gamepad(e.device);
-		joy.connected = true;
-		joy.axis = e.axis;
-	}
-
-	static function onJoyBallMove(e:JoystickEvent)
-	{
-		var joy:Gamepad = gamepad(e.device);
-		joy.connected = true;
-		joy.ball.x = (Math.abs(e.x) < Gamepad.deadZone) ? 0 : e.x;
-		joy.ball.y = (Math.abs(e.y) < Gamepad.deadZone) ? 0 : e.y;
-	}
-
-	static function onJoyButtonDown(e:JoystickEvent)
-	{
-		var joy:Gamepad = gamepad(e.device);
-		joy.connected = true;
-		joy.buttons.set(e.id, BUTTON_PRESSED);
-	}
-
-	static function onJoyButtonUp(e:JoystickEvent)
-	{
-		var joy:Gamepad = gamepad(e.device);
-		joy.connected = true;
-		joy.buttons.set(e.id, BUTTON_RELEASED);
-	}
-
-	static function onJoyHatMove(e:JoystickEvent)
-	{
-		var joy:Gamepad = gamepad(e.device);
-		joy.connected = true;
-		joy.hat.x = (Math.abs(e.x) < Gamepad.deadZone) ? 0 : e.x;
-		joy.hat.y = (Math.abs(e.y) < Gamepad.deadZone) ? 0 : e.y;
-	}
-
-	static function onJoyDeviceAdded(e:JoystickEvent) {}
-	static function onJoyDeviceRemoved(e:JoystickEvent) {}
-#else
-	// TODO
-	static function onJoyDeviceAdded(e:GameInputEvent) {}
-	static function onJoyDeviceRemoved(e:GameInputEvent) {}
-#end
-
-	/**
-	 * A map of buttons and their states
-	 */
-	public var buttons:Map<Int, JoyButtonState>;
-	/**
-	 * Each axis contained in an array.
-	 */
-	public var axis(null, default):Array<Float>;
-	/**
-	 * A Point containing the gamepad's hat value.
-	 */
-	public var hat:Point;
-	/**
-	 * A Point containing the gamepad's ball value.
-	 */
-	public var ball:Point;
-
 	/**
 	 * Determines the gamepad's deadZone. Anything under this value will be considered 0 to prevent jitter.
 	 */
 	public static var deadZone:Float = 0.15;
 
+	public static var gamepads:Map<Int, Gamepad> = new Map<Int, Gamepad>();
+	public static var onConnect:TypedSignal<Gamepad> = new TypedSignal();
+	public static var onDisconnect:TypedSignal<Gamepad> = new TypedSignal();
+
+	public static function init()
+	{
+		#if lime
+		LimeGamepad.onConnect.add(onJoyDeviceAdded);
+		for (device in LimeGamepad.devices) onJoyDeviceAdded(device);
+		#else
+		HXP.stage.addEventListener(JoystickEvent.AXIS_MOVE, onJoyAxisMove);
+		HXP.stage.addEventListener(JoystickEvent.BUTTON_DOWN, onJoyButtonDown);
+		HXP.stage.addEventListener(JoystickEvent.BUTTON_UP, onJoyButtonUp);
+		HXP.stage.addEventListener(JoystickEvent.DEVICE_ADDED, onJoyDeviceAdded);
+		HXP.stage.addEventListener(JoystickEvent.DEVICE_REMOVED, onJoyDeviceRemoved);
+		#end
+	}
+
+	/**
+	 * Returns a gamepad object, or null if none exists at this ID.
+	 * @param  id The id of the gamepad, starting with 0
+	 * @return    A Gamepad object
+	 */
+	public static function gamepad(id:GamepadID):Null<Gamepad>
+	{
+		return gamepads.get(id);
+	}
+
+	/**
+	 * Returns the number of connected gamepads
+	 */
+	public static var gamepadCount(default, null):Int = 0;
+
+#if lime
+	static function onJoyDeviceAdded(limeGamepad:LimeGamepad)
+	{
+		var joy:Gamepad = new Gamepad(limeGamepad.id);
+		gamepads[limeGamepad.id] = joy;
+		++gamepadCount;
+
+		limeGamepad.onButtonUp.add(joy.onButtonUp);
+		limeGamepad.onButtonDown.add(joy.onButtonDown);
+		limeGamepad.onAxisMove.add(onJoyAxisMove.bind(limeGamepad));
+		limeGamepad.onDisconnect.add(onJoyDeviceRemoved.bind(limeGamepad));
+
+		Input.handlers.push(joy);
+		onConnect.invoke(joy);
+	}
+
+	static function onJoyDeviceRemoved(limeGamepad:LimeGamepad)
+	{
+		var joy:Gamepad = gamepad(limeGamepad.id);
+		joy.connected = false;
+		gamepads.remove(limeGamepad.id);
+		--gamepadCount;
+
+		if (Input.handlers.indexOf(joy) > -1) Input.handlers.remove(joy);
+		onDisconnect.invoke(joy);
+	}
+
+	static function onJoyAxisMove(limeGamepad:LimeGamepad, a:GamepadAxis, v:Float)
+	{
+		var joy:Gamepad = gamepad(limeGamepad.id);
+		joy.onAxisMove(a, v);
+	}
+#else
+	static function onJoyAxisMove(e:JoystickEvent)
+	{
+		var joy:Gamepad = gamepad(e.device);
+		for (i in 0 ... e.axis.length)
+		{
+			joy.onAxisMove(i, e.axis[i]);
+		}
+	}
+
+	static function onJoyButtonDown(e:JoystickEvent)
+	{
+		var joy:Gamepad = gamepad(e.device);
+		joy.onButtonDown(e.id);
+	}
+
+	static function onJoyButtonUp(e:JoystickEvent)
+	{
+		var joy:Gamepad = gamepad(e.device);
+		joy.buttons.set(e.id, BUTTON_RELEASED);
+	}
+
+	static function onJoyDeviceAdded(e:JoystickEvent)
+	{
+		var joy = new Gamepad(e.device);
+		gamepads[e.device] = joy;
+		++gamepadCount;
+		Input.handlers.push(joy);
+		onConnect.invoke(joy);
+	}
+
+	static function onJoyDeviceRemoved(e:JoystickEvent)
+	{
+		var joy:Gamepad = gamepad(e.device);
+		joy.connected = false;
+		gamepads.remove(e.device);
+		--gamepadCount;
+		if (Input.handlers.indexOf(joy) > -1) Input.handlers.remove(joy);
+		onDisconnect.invoke(joy);
+	}
+#end
+
+	public var id:Int = 0;
+
+	/**
+	 * If the gamepad is currently connected.
+	 */
+	public var connected:Bool = true;
+
+	/**
+	 * A map of buttons and their states
+	 */
+	public var buttons:Map<Int, JoyButtonState> = new Map();
+	/**
+	 * Each axis contained in an array.
+	 */
+	public var axis(null, default):Map<Int, Float> = new Map();
+	var lastAxis:Map<Int, Float> = new Map();
+	/**
+	 * A Point containing the gamepad's hat value.
+	 */
+	public var hat:Point = new Point();
+
 	/**
 	 * Creates and initializes a new Gamepad.
 	 */
 	@:dox(hide)
-	public function new()
+	function new(id:Int)
 	{
-		buttons = new Map<Int, JoyButtonState>();
-		ball = new Point(0, 0);
-		axis = new Array<Float>();
-		hat = new Point(0, 0);
-		connected = false;
-		_timeout = 0;
+		this.id = id;
 	}
+
+	public function update():Void {}
 
 	/**
 	 * Updates the gamepad's state.
 	 */
 	@:dox(hide)
-	public function update()
+	public function postUpdate():Void
 	{
-		_timeout -= HXP.elapsed;
-		for (button in buttons.keys())
+		for (button in _allButtons)
 		{
 			switch (buttons.get(button))
 			{
@@ -182,11 +194,15 @@ class Gamepad
 				default:
 			}
 		}
+		for (axis in _allAxes)
+		{
+			lastAxis[axis] = this.axis[axis];
+		}
 	}
 
 	public function defineButton(input:InputType, buttons:Array<GamepadButton>)
 	{
-		// undefine any pre-existing key mappings
+		// undefine any pre-existing button mappings
 		if (_control.exists(input))
 		{
 			for (button in _control[input])
@@ -202,7 +218,28 @@ class Gamepad
 		}
 	}
 
-	// TODO: defineAxis
+	public function defineAxis(input:InputType, axis:GamepadAxis, minValue:Float=0, maxValue:Float=1)
+	{
+		if (minValue > maxValue)
+		{
+			var swap = maxValue;
+			maxValue = minValue;
+			minValue = swap;
+		}
+		if (!_axisControl.exists(input))
+		{
+			_axisControl[input] = new Array();
+		}
+		var def = {
+			axis: axis,
+			minValue: minValue,
+			maxValue: maxValue,
+			input: input
+		};
+		_axisControl[input].push(def);
+		if (!_axisMap.exists(axis)) _axisMap[axis] = new Array();
+		if (_axisMap[axis].indexOf(def) < 0) _axisMap[axis].push(def);
+	}
 
 	public function checkInput(input:InputType)
 	{
@@ -211,6 +248,10 @@ class Gamepad
 			for (button in _control[input])
 			{
 				if (check(button)) return true;
+			}
+			for (axisDef in _axisControl[input])
+			{
+				if (checkAxis(axisDef)) return true;
 			}
 		}
 		return false;
@@ -225,6 +266,13 @@ class Gamepad
 				if (pressed(button)) return true;
 			}
 		}
+		if (_axisControl.exists(input))
+		{
+			for (axisDef in _axisControl[input])
+			{
+				if (pressedAxis(axisDef)) return true;
+			}
+		}
 		return false;
 	}
 
@@ -236,13 +284,17 @@ class Gamepad
 			{
 				if (released(button)) return true;
 			}
+			for (axisDef in _axisControl[input])
+			{
+				if (releasedAxis(axisDef)) return true;
+			}
 		}
 		return false;
 	}
 
 	public function pressed(button:GamepadButton):Bool
 	{
-		return (buttons.exists(button)) ? buttons.get(button) == BUTTON_PRESSED : false;
+		return buttons.exists(button) && buttons.get(button) == BUTTON_PRESSED;
 	}
 
 	/**
@@ -252,7 +304,7 @@ class Gamepad
 	 */
 	public function released(button:GamepadButton):Bool
 	{
-		return (buttons.exists(button)) ? buttons.get(button) == BUTTON_RELEASED : false;
+		return buttons.exists(button) && buttons.get(button) == BUTTON_RELEASED;
 	}
 
 	/**
@@ -262,7 +314,27 @@ class Gamepad
 	 */
 	public function check(button:GamepadButton):Bool
 	{
-		return (buttons.exists(button)) ? (buttons[button] != BUTTON_OFF && buttons[button] != BUTTON_RELEASED) : false;
+		return buttons.exists(button) && buttons[button] != BUTTON_OFF && buttons[button] != BUTTON_RELEASED;
+	}
+
+	public function pressedAxis(axisDef:AxisDefinition):Bool
+	{
+		return checkAxis(axisDef) && !checkLastAxis(axisDef);
+	}
+
+	public function releasedAxis(axisDef:AxisDefinition):Bool
+	{
+		return checkLastAxis(axisDef) && !checkAxis(axisDef);
+	}
+
+	public inline function checkAxis(axisDef:AxisDefinition):Bool
+	{
+		return axis.exists(axisDef.axis) && axis[axisDef.axis] >= axisDef.minValue && axis[axisDef.axis] <= axisDef.maxValue;
+	}
+
+	inline function checkLastAxis(axisDef:AxisDefinition):Bool
+	{
+		return lastAxis.exists(axisDef.axis) && lastAxis[axisDef.axis] >= axisDef.minValue && lastAxis[axisDef.axis] <= axisDef.maxValue;
 	}
 
 	/**
@@ -271,25 +343,41 @@ class Gamepad
 	 */
 	public inline function getAxis(a:Int):Float
 	{
-		if (a < 0 || a >= axis.length) return 0;
+		if (!axis.exists(a)) return 0;
 		else return (Math.abs(axis[a]) < deadZone) ? 0 : axis[a];
 	}
 
-	/**
-	 * If the gamepad is currently connected.
-	 */
-	public var connected(get, set):Bool;
-	function get_connected():Bool return _timeout > 0;
-	function set_connected(value:Bool):Bool
+	function onButtonUp(id:GamepadButton)
 	{
-		if (value) _timeout = 3; // 3 seconds to timeout
-		else _timeout = 0;
-		return value;
+		buttons.set(id, BUTTON_RELEASED);
+		if (_buttonMap.exists(id)) for (inputType in _buttonMap[id]) Input.triggerRelease(inputType);
 	}
 
-	var _timeout:Float;
+	function onButtonDown(id:GamepadButton)
+	{
+		if (!buttons.exists(id)) _allButtons.push(id);
+		buttons.set(id, BUTTON_PRESSED);
+		if (_buttonMap.exists(id)) for (inputType in _buttonMap[id]) Input.triggerPress(inputType);
+	}
+
+	function onAxisMove(axis:GamepadAxis, v:Float):Void {
+		if (Math.abs(v) < deadZone) v = 0;
+		if (!this.axis.exists(axis)) _allAxes.push(axis);
+		this.axis[axis] = v;
+		if (_axisMap.exists(axis))
+		{
+			for (axisDef in _axisMap[axis])
+			{
+				if (v >= axisDef.minValue && v <= axisDef.maxValue) Input.triggerPress(axisDef.input);
+				else if (lastAxis[axis] >= axisDef.minValue && lastAxis[axis] <= axisDef.maxValue) Input.triggerRelease(axisDef.input);
+			}
+		}
+	}
+
 	var _control:Map<InputType, Array<GamepadButton>> = new Map();
 	var _buttonMap:Map<GamepadButton, Array<InputType>> = new Map();
-
-	static var _gamepads:Map<Int, Gamepad> = new Map<Int, Gamepad>();
+	var _allButtons:Array<GamepadButton> = new Array();
+	var _axisControl:Map<InputType, Array<AxisDefinition>> = new Map();
+	var _axisMap:Map<GamepadAxis, Array<AxisDefinition>> = new Map();
+	var _allAxes:Array<GamepadButton> = new Array();
 }
