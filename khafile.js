@@ -23,28 +23,73 @@ let project = new Project('haxepunk');
 //     <haxeflag name="--macro" value="haxepunk.utils.Platform.run()" />
 
 
-project.addSources('haxepunk');
-
-HaxePunkConfig.message = "test"
-
+project.addSources('.');
 
 // // Setup configuration defaults 
-// cfg = HaxePunkConfig || {};
+let cfgDefault = {
+    all:{
+        meta: {
+            title: 'project name',
+            package: 'com.project.app',
+            version: '0.0.0',
+            company: 'company',
+            icon: 'HaxePunk-icon.svg'
+        },
+        window: {
+            fps: 60,
+            background: '0x333333',
+            width: 1280,
+            height: 960,
+            resizable: true
+        },
+        assets: [],
+        flags: {
+            hxp_deubg: false,
+            hxp_no_assets: false,
+            hxp_debug_console: false,
+            hxp_gl_debug: false,
+            hxp_loglevel: 'debug'
+        }
+    }
+};
 
-// cfg.hxp_no_assets |= false;
-// cfg.hxp_debug_console |= false;
+function writeOver( base, ...fillers ){
+    for(let fill of fillers){
+        for (let prop in fill) {
+            if (typeof fill[prop] === "object") {
+                if (!base.hasOwnProperty(prop)) {
+                    base[prop] = fill[prop];
+                } else {
+                    writeOver(base[prop],fill[prop]);
+                }
+            } else {
+                base[prop] = fill[prop];
+            }
+        }
+    }
+};
 
-// if (!HXP_CFG.hxp_no_assets) {
-//     project.addAssets('assets/**');
-// }
-// if (HXP_CFG.hxp_debug_console)
-// {
-//     project.addAssets('assets/font/**');
-// }
+let cfg = writeOver( cfgDefault, HaxePunkConfig );
 
+let flags = cfg.all.flags;
+if (!flags.hxp_no_assets) {
+    project.addAssets('assets/**');
+    project.addShaders('shaders/**');
+}
 
-project.addDefine('hxp_test_message_lib');
+if (flags.hxp_debug_console) project.addAssets('assets/font/**');
+flags.hxp_debug = flags.hxp_debug || flags.hxp_debug_console;
 
-project.addShaders('shaders/**');
+// HaxePunk flags
+for (let key in flags) {
+    if (flags[key]) project.addDefine(key);
+}
+
+// Export utils
+HaxePunkConfig.utils = {
+    loadAssets: (project)=>{
+        // ...do asset loading abstraction here...
+    }
+};
 
 resolve(project);
