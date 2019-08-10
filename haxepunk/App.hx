@@ -25,6 +25,12 @@ class App
 
 	public function init()
 	{
+		#if ( hxp_test_message )
+				trace("message from project?");
+		#end
+		#if ( hxp_test_message_lib )
+				trace("message from lib?");
+		#end
 		// TODO : fetch window title and dimensions from project file
 		System.start({title: "Project", width: 1024, height: 768, framebuffer: {frequency: Std.int(HXP.assignedFrameRate)}}, function(window)
 		{
