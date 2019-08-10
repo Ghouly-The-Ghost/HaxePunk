@@ -27,7 +27,7 @@ project.addSources('.');
 
 // // Setup configuration defaults 
 let cfgDefault = {
-    all:{
+    all: {
         meta: {
             title: 'project name',
             package: 'com.project.app',
@@ -53,14 +53,14 @@ let cfgDefault = {
     }
 };
 
-function writeOver( base, ...fillers ){
-    for(let fill of fillers){
+function writeOver(base, ...fillers) {
+    for (let fill of fillers) {
         for (let prop in fill) {
             if (typeof fill[prop] === "object") {
                 if (!base.hasOwnProperty(prop)) {
                     base[prop] = fill[prop];
                 } else {
-                    writeOver(base[prop],fill[prop]);
+                    writeOver(base[prop], fill[prop]);
                 }
             } else {
                 base[prop] = fill[prop];
@@ -69,7 +69,8 @@ function writeOver( base, ...fillers ){
     }
 };
 
-let cfg = writeOver( cfgDefault, HaxePunkConfig );
+let cfg = cfgDefault;
+writeOver(cfg, HaxePunkConfig || {});
 
 let flags = cfg.all.flags;
 if (!flags.hxp_no_assets) {
@@ -87,7 +88,7 @@ for (let key in flags) {
 
 // Export utils
 HaxePunkConfig.utils = {
-    loadAssets: (project)=>{
+    loadAssets: (project) => {
         // ...do asset loading abstraction here...
     }
 };
