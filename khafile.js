@@ -48,7 +48,8 @@ let cfgDefault = {
             hxp_no_assets: false,
             hxp_debug_console: false,
             hxp_gl_debug: false,
-            hxp_loglevel: 'debug'
+            hxp_loglevel: 'debug',
+            hxp_lime_asset_paths: false
         }
     }
 };
