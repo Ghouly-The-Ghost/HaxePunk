@@ -95,12 +95,41 @@ for (let key in flags) {
     }
 }
 
+const assets = HaxePunk.config.all.assets;
+
 // Export utils
 HaxePunk = {
     config: HaxePunk.config,
+    
+    // TODO REVISIT: Test the import logic here on a more advanced setup compared to Lime HaxePunk 
     loadAssets: (project) => {
-        // ...do asset loading abstraction here...
-        console.log("...");
+        const destination = (flags["hxp_lime_asset_paths"] == true)? '{name}{ext}' : '{name}';
+
+        assets.forEach(({ path, include, exclude, rename = undefined, baseDir }) => {
+            // Get base dir name.
+            let nameBaseDir = baseDir || path.substring(0, path.indexOf('/'));
+            const destName = rename ? `${rename}/${destination}` : `{dir}/${destination}`;
+            
+            if (!path.endsWith('/')) path += '/';
+            
+            // NOTE: this only works with extensions, and globs basically 
+            // have an inclusion-based precedence meaning an inclusive star will
+            // overide any kind of exclusion. Terrible!
+            // TODO REVISIT: might need to throw in a warning about this.
+            let glob = path;
+            if(include || exclude) {
+                glob += '**/*(';
+                if(include) glob += '*.' + include.join('|*.');
+                if(exclude) glob += (include? '|!*.' : '!*.') + exclude.join('|!*.'); 
+                glob += ')';
+            }
+            project.addAssets( glob, {
+                nameBaseDir,
+                destination: destName,
+                name: destName             
+            })
+            // TODO REVISIT: difference between destination an name, and is this the same as `rename` in Lime??
+        });
     }
 };
 
