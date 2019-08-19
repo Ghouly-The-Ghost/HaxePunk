@@ -102,13 +102,13 @@ HaxePunk = {
     config: HaxePunk.config,
     
     // TODO REVISIT: Test the import logic here on a more advanced setup compared to Lime HaxePunk 
-    loadAssets: (project) => {
+    loadAssets: project => {
         const destination = (flags["hxp_lime_asset_paths"] == true)? '{name}{ext}' : '{name}';
 
         assets.forEach(({ path, include, exclude, rename, baseDir, glob }) => {
             // Get base dir name.
             let nameBaseDir = baseDir || path.substring(0, path.indexOf('/'));
-            const destName = rename ? `${rename}/${destination}` : `{dir}/${destination}`;
+            const destName = rename? `${rename}/${destination}` : `{dir}/${destination}`;
             
             if (!path.endsWith('/')) path += '/';
             
@@ -120,17 +120,18 @@ HaxePunk = {
                 glob = path;
                 if (include || exclude) {
                     glob += '**/*(';
-                    if(include) glob += '*.' + include.join('|*.');
-                    if(exclude) glob += (include? '|!*.' : '!*.') + exclude.join('|!*.'); 
+                    if (include) glob += '*.' + include.join('|*.');
+                    if (exclude) glob += (include? '|!*.' : '!*.') + exclude.join('|!*.'); 
                     glob += ')';
                 }
             }
-            project.addAssets( glob, {
+
+            // TODO REVISIT: difference between destination an name, and is this the same as `rename` in Lime??
+            project.addAssets(glob, {
                 nameBaseDir,
                 destination: destName,
                 name: destName             
-            })
-            // TODO REVISIT: difference between destination an name, and is this the same as `rename` in Lime??
+            });
         });
     }
 };
