@@ -85,7 +85,13 @@ flags.hxp_debug = flags.hxp_debug || flags.hxp_debug_console;
 
 // HaxePunk flags
 for (let key in flags) {
-    if (flags[key]) project.addDefine(key);
+    let val = flags[key];
+    if (val === true ) {
+        project.addDefine(key);
+    } 
+    else if( val !== false ) {
+        project.addDefine(`${key}=${val}`);
+    }
 }
 
 // Export utils
