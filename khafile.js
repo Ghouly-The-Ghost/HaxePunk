@@ -69,8 +69,10 @@ function writeOver(base, ...fillers) {
     }
 };
 
+// HaxePunk and HaxePunk.config must be defined in the Game's Khafile
+// e.g.: HaxePunk = { config: { all:{} } };
 let cfg = cfgDefault;
-writeOver(cfg, HaxePunkConfig || {});
+writeOver(cfg, HaxePunk.config || {});
 
 let flags = cfg.all.flags;
 if (!flags.hxp_no_assets) {
@@ -87,9 +89,11 @@ for (let key in flags) {
 }
 
 // Export utils
-HaxePunkConfig.utils = {
+HaxePunk = {
+    config: HaxePunk.config,
     loadAssets: (project) => {
         // ...do asset loading abstraction here...
+        console.log("...");
     }
 };
 
