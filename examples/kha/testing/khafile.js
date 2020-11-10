@@ -1,5 +1,8 @@
 let project = new Project('Testing');
 
+// Add HaxePunk
+await project.addProject("./../../../");
+
 project.addAssets('assets/**', {
     nameBaseDir: 'assets',
     destination: '{dir}/{name}',
@@ -8,5 +11,6 @@ project.addAssets('assets/**', {
 
 project.addShaders('Shaders/**');
 project.addSources('Sources');
+
 
 resolve(project);

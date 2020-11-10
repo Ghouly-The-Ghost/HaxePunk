@@ -1,6 +1,270 @@
 {
 	"files": [
 		{
+			"name": "____________assets_font_monofonto",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.png"
+			],
+			"file_sizes": [
+				19835
+			],
+			"type": "image",
+			"original_width": 256,
+			"original_height": 256
+		},
+		{
+			"name": "____________assets_font_monofonto",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.ttf"
+			],
+			"file_sizes": [
+				58088
+			],
+			"type": "font"
+		},
+		{
+			"name": "____________assets_font_monofonto_eot",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.eot"
+			],
+			"file_sizes": [
+				58280
+			],
+			"type": "blob"
+		},
+		{
+			"name": "____________assets_font_monofonto_fnt",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.fnt"
+			],
+			"file_sizes": [
+				11598
+			],
+			"type": "blob"
+		},
+		{
+			"name": "____________assets_font_monofonto_svg",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.svg"
+			],
+			"file_sizes": [
+				93599
+			],
+			"type": "blob"
+		},
+		{
+			"name": "____________assets_font_monofonto_woff",
+			"files": [
+				"..\\..\\..\\..\\assets\\font/monofonto.woff"
+			],
+			"file_sizes": [
+				28068
+			],
+			"type": "blob"
+		},
+		{
+			"name": "____________assets_graphics_debug_button",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/button.png"
+			],
+			"file_sizes": [
+				187
+			],
+			"type": "image",
+			"original_width": 32,
+			"original_height": 32
+		},
+		{
+			"name": "____________assets_graphics_debug_console_debug",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_debug.png"
+			],
+			"file_sizes": [
+				163
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_drawcall_add",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_drawcall_add.png"
+			],
+			"file_sizes": [
+				176
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_drawcall_all",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_drawcall_all.png"
+			],
+			"file_sizes": [
+				190
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_hidden",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_hidden.png"
+			],
+			"file_sizes": [
+				132
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_logo",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_logo.png"
+			],
+			"file_sizes": [
+				21703
+			],
+			"type": "image",
+			"original_width": 512,
+			"original_height": 256
+		},
+		{
+			"name": "____________assets_graphics_debug_console_output",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_output.png"
+			],
+			"file_sizes": [
+				182
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_pause",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_pause.png"
+			],
+			"file_sizes": [
+				114
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_play",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_play.png"
+			],
+			"file_sizes": [
+				145
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_step",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_step.png"
+			],
+			"file_sizes": [
+				162
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_debug_console_visible",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\debug/console_visible.png"
+			],
+			"file_sizes": [
+				176
+			],
+			"type": "image",
+			"original_width": 20,
+			"original_height": 20
+		},
+		{
+			"name": "____________assets_graphics_preloader_haxepunk",
+			"files": [
+				"..\\..\\..\\..\\assets\\graphics\\preloader/haxepunk.png"
+			],
+			"file_sizes": [
+				20983
+			],
+			"type": "image",
+			"original_width": 274,
+			"original_height": 362
+		},
+		{
+			"name": "atlas_assets_xml",
+			"files": [
+				"atlas/assets.xml"
+			],
+			"file_sizes": [
+				888
+			],
+			"type": "blob"
+		},
+		{
+			"name": "graphics_atlas",
+			"files": [
+				"graphics/atlas.png"
+			],
+			"file_sizes": [
+				49678
+			],
+			"type": "image",
+			"original_width": 256,
+			"original_height": 512
+		},
+		{
+			"name": "graphics_grass",
+			"files": [
+				"graphics/grass.png"
+			],
+			"file_sizes": [
+				796
+			],
+			"type": "image",
+			"original_width": 32,
+			"original_height": 32
+		},
+		{
+			"name": "graphics_pirate",
+			"files": [
+				"graphics/pirate.png"
+			],
+			"file_sizes": [
+				49476
+			],
+			"type": "image",
+			"original_width": 148,
+			"original_height": 256
+		},
+		{
+			"name": "graphics_wabbit_alpha",
+			"files": [
+				"graphics/wabbit_alpha.png"
+			],
+			"file_sizes": [
+				467
+			],
+			"type": "image",
+			"original_width": 26,
+			"original_height": 37
+		},
+		{
 			"name": "painter_colored_frag",
 			"files": [
 				"painter-colored.frag.essl",
