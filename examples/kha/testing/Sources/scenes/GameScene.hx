@@ -45,7 +45,7 @@ class GameScene extends Scene
 
 		tapTime = 0;
 
-		atlas = TextureAtlas.loadTexturePacker("atlas/assets.xml");
+		atlas = TextureAtlas.loadTexturePacker("atlas_assets_xml");
 	}
 
 	override public function begin()
@@ -71,6 +71,8 @@ class GameScene extends Scene
 		// add(overlay);
 
 		addBunnies(numBunnies);
+
+		// trace("bunnies added");
 	}
 
 	function addBunnies(numToAdd:Int):Void
@@ -116,6 +118,8 @@ class GameScene extends Scene
 		}
 
 		super.update();
+
+		// trace("updating scene");
 	}
 
 	var addingBunnies:Bool = false;
