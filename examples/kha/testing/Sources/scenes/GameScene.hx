@@ -1,8 +1,10 @@
 package scenes;
 
+
+import kha.System;
 import haxepunk.graphics.Graphiclist;
 import haxepunk.graphics.Image;
-import haxepunk.graphics.text.Text;
+// import haxepunk.graphics.text.Text;
 import haxepunk.HXP;
 import haxepunk.Entity;
 import haxepunk.graphics.atlas.TextureAtlas;
@@ -13,7 +15,6 @@ import haxepunk.input.Input;
 import haxepunk.input.Key;
 import haxepunk.input.Mouse;
 import haxepunk.Scene;
-import flash.Lib;
 import entities.Bunny;
 
 class GameScene extends Scene
@@ -31,7 +32,7 @@ class GameScene extends Scene
 	var bunnyList:Graphiclist;
 
 	var tapTime:Float;
-	var overlayText:Text;
+	// var overlayText:Text;
 
 	public function new()
 	{
@@ -64,10 +65,10 @@ class GameScene extends Scene
 		pirate = new Image(atlas.getRegion("pirate.png"));
 		addGraphic(pirate);
 
-		overlayText = new Text("numBunnies = " + numBunnies, 0, 0, 0, 0, { color:0x000000, size:30 } );
-		overlayText.resizable = true;
-		var overlay:Entity = new Entity(0, HXP.screen.height - 40, overlayText);
-		add(overlay);
+		// overlayText = new Text("numBunnies = " + numBunnies, 0, 0, 0, 0, { color:0x000000, size:30 } );
+		// overlayText.resizable = true;
+		// var overlay:Entity = new Entity(0, HXP.screen.height - 40, overlayText);
+		// add(overlay);
 
 		addBunnies(numBunnies);
 	}
@@ -90,12 +91,13 @@ class GameScene extends Scene
 		}
 
 		numBunnies = bunnies.length;
-		overlayText.text = "numBunnies = " + numBunnies;
+		// overlayText.text = "numBunnies = " + numBunnies;
 	}
 
 	override public function update()
 	{
-		var t = Lib.getTimer();
+		// var t = Lib.getTimer();
+		var t = System.time;
 		pirate.x = Std.int((HXP.width - pirate.width) * (0.5 + 0.5 * Math.sin(t / 3000)));
 		pirate.y = Std.int(HXP.height - 1.3 * pirate.height + 70 - 30 * Math.sin(t / 100));
 

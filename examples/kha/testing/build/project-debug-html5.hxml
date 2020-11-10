@@ -1,6 +1,6 @@
 -cp c:\Users\Xano\Documents\projects\haxepunk\Kha\Sources
 -cp c:\Users\Xano\Documents\projects\haxepunk\Kha\Backends\HTML5
--cp C:\Users\Xano\Documents\projects\haxepunk\haxepunk
+-cp C:\Users\Xano\Documents\projects\haxepunk
 -cp C:\Users\Xano\Documents\projects\haxepunk\examples\kha\testing\Sources
 -D hxcpp_smart_strings
 -D sys_g1
@@ -31,6 +31,5 @@
 -D kha_version=1810
 -D kha_project_name=Testing
 -js debug-html5\kha.js
---macro haxepunk.utils.Platform.run()
 -debug
 -main Main

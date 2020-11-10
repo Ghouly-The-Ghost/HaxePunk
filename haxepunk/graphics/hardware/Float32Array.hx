@@ -17,7 +17,7 @@ abstract Float32Array(F32Array) from F32Array to F32Array
 
 	public function new(inBufferOrArray:Dynamic, inStart:Int = 0, ?inElements:Null<Int>)
 	{
-		return new F32Array();
+		this = new F32Array();
 	}
 
 	public function setInt32(_, _)
