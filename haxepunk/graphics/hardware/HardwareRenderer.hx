@@ -75,6 +75,11 @@ class HardwareRenderer
 	var screenScaleX:Float;
 	var screenScaleY:Float;
 
+	var x:Int = 0;
+	var y:Int = 0;
+	var width:Int = 0;
+	var height:Int = 0;
+
 	public function new()
 	{
 #if 0
@@ -93,15 +98,15 @@ class HardwareRenderer
 		}
 	}
 
+	/*
+
+	*/
 	@:access(haxepunk.graphics.hardware.DrawCommand)
 	public function render(drawCommand:DrawCommand):Void
 	{
-		#if 0
-		GLUtils.checkForErrors();
-
 		var x = this.x,
 			y = this.y,
-			width = this.width,
+			width = this.width,			// shadowing is bad, but happening here.
 			height = this.height,
 			screen = HXP.screen;
 
@@ -126,32 +131,26 @@ class HardwareRenderer
 			if (width > 0 && height > 0)
 			{
 				var shader = drawCommand.shader;
-				shader.bind();
+				// shader.bind();
 
 				// expand arrays if necessary
 				var triangles:Int = drawCommand.triangleCount;
 				var floatsPerTriangle:Int = shader.floatsPerVertex * 3;
-				buffer.ensureSize(triangles, floatsPerTriangle);
+				
 
-				#if (html5 && lime >= "5.0.0")
-				GL.uniformMatrix4fvWEBGL(shader.uniformIndex(UNIFORM_MATRIX), false, _ortho);
-				#elseif (lime >= "4.0.0")
-				GL.uniformMatrix4fv(shader.uniformIndex(UNIFORM_MATRIX), 1, false, _ortho);
-				#else
-				GL.uniformMatrix4fv(shader.uniformIndex(UNIFORM_MATRIX), false, _ortho);
-				#end
+				// buffer.ensureSize(triangles, floatsPerTriangle);
+				// GL.uniformMatrix4fv(shader.uniformIndex(UNIFORM_MATRIX), 1, false, _ortho);
 
-				GLUtils.checkForErrors();
 
 				var texture:Texture = drawCommand.texture;
-				if (texture != null) GLUtils.bindTexture(texture, drawCommand.smooth);
-				GLUtils.checkForErrors();
+				// if (texture != null) 
+				// 	GLUtils.bindTexture(texture, drawCommand.smooth);
 
-				shader.prepare(drawCommand, buffer);
 
-				GLUtils.checkForErrors();
+				// shader.prepare(drawCommand, buffer);
 
-				setBlendMode(drawCommand.blend);
+				// setBlendMode(drawCommand.blend);
+
 
 				if (clipRect != null)
 				{
@@ -159,28 +158,26 @@ class HardwareRenderer
 					y += Std.int(Math.max(clipRect.y, 0));
 				}
 
-				GL.scissor(x, screenHeight - y - height, width, height);
-				GL.enable(GL.SCISSOR_TEST);
 
-				GL.drawArrays(GL.TRIANGLES, 0, triangles * 3);
+				// GL.scissor(x, screenHeight - y - height, width, height);
+				// GL.enable(GL.SCISSOR_TEST);
+				// 	GL.drawArrays(GL.TRIANGLES, 0, triangles * 3);
+				// GL.disable(GL.SCISSOR_TEST);
 
-				GLUtils.checkForErrors();
+				// GL.bindBuffer(GL.ARRAY_BUFFER, null);
 
-				GL.disable(GL.SCISSOR_TEST);
-
-				GL.bindBuffer(GL.ARRAY_BUFFER, null);
-				shader.unbind();
-
-				GLUtils.checkForErrors();
+				//  shader.unbind();
 			}
 		}
-		#end
 	}
 
+	/*
+
+	*/
 	@:access(haxepunk.Screen)
 	public function startScene(scene:Scene) : Canvas
 	{
-		GLUtils.checkForErrors();
+		// GLUtils.checkForErrors();
 		// _tracking = scene.trackDrawCalls;
 
 		/*
@@ -201,14 +198,17 @@ class HardwareRenderer
 
 		var postProcess:Array<SceneShader> = scene.shaders;
 		var firstShader:SceneShader = null;
-		if (postProcess != null) for (p in postProcess)
-		{
-			if (p.active)
+		if (postProcess != null) {
+			for (p in postProcess)
 			{
-				firstShader = p;
-				break;
+				if (p.active)
+				{
+					firstShader = p;
+					break;
+				}
 			}
 		}
+
 		if (firstShader != null)
 		{
 			// fb.bindFrameBuffer();
@@ -237,6 +237,9 @@ class HardwareRenderer
 		return postProcess != null && postProcess.length > 0 ? fb : defaultFramebuffer;
 	}
 
+	/*
+
+	*/
 	@:access(haxepunk.Screen)
 	public function flushScene(scene:Scene)
 	{
@@ -339,11 +342,13 @@ class HardwareRenderer
 
 	public function startFrame(framebuffer:Canvas)
 	{
-		// triangleCount = 0;
-		// drawCallCount = 0;
+		triangleCount = 0;
+		drawCallCount = 0;
 		// bindDefaultFramebuffer();
 		defaultFramebuffer = framebuffer;
 	}
+
+	/// note: This seems to never have been used
 	public function endFrame() {}
 
 	inline function init()
@@ -367,9 +372,4 @@ class HardwareRenderer
 	}
 
 	inline function destroy() {}
-
-	var x:Int = 0;
-	var y:Int = 0;
-	var width:Int = 0;
-	var height:Int = 0;
 }

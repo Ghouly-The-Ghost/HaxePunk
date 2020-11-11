@@ -39,7 +39,7 @@ class GameScene extends Scene
 		super();
 
 		gravity = 5;
-		incBunnies = 100;
+		incBunnies = 1;
 
 		numBunnies = incBunnies;
 
