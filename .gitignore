@@ -22,3 +22,5 @@ ExampleTest.hx
 .DS_Store
 Thumbs.db
 .tm*
+
+build/*
